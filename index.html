@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Zoomer</title>
+
+    <link rel="stylesheet" href="css/index.css">
+</head>
+<body>
+    <div class="tooltips">
+        <button class="tooltips__zoom-in"
+                onclick="zoomer.zoomIn()">
+            Увеличить
+        </button>
+        <button class="tooltips__zoom-out"
+                onclick="zoomer.zoomOut()">
+            Уменьшить
+        </button>
+    </div>
+
+    <div class="area">
+        <div class="area__item"></div>
+    </div>
+
+    <script src="zoomer.js"></script>
+    <script>
+        const zoomer = new Zoomer(document.querySelector('.area__item'))
+    </script>
+</body>
+</html>

@@ -1,4 +1,11 @@
 class Zoomer {
+    _minScale = 1
+    _maxScale = 8
+
+    _defaultZoomCoefficient = 1.5
+
+    _onDoubleClick
+
     _matrix = {
         scale: 0,
         translateX: 0,
@@ -12,38 +19,70 @@ class Zoomer {
         previousY: 0
     }
 
-    constructor(element, minScale = 1, maxScale = 8, defaultZoomCoefficient = 1.5) {
+    constructor(element) {
         this._element = element
         this._element.style.touchAction = 'none'
 
         this._element.addEventListener('pointerdown', this._onPointerDown.bind(this))
-        this._element.addEventListener('dblclick', this._onDoubleClick.bind(this))
 
-        this._minScale = minScale
-        this._maxScale = maxScale
+        this.resetAll()
+    }
 
-        this.reset()
+    setZoomLimit(min, max) {
+        this._minScale = min
+        this._maxScale = max
 
+        this.resetZoom()
+
+        return this
+    }
+    setDefaultZoomCoefficient(defaultZoomCoefficient) {
         this._defaultZoomCoefficient = defaultZoomCoefficient
+        return this
+    }
+
+    setDoubleClickToElement(handler = null) {
+        this._onDoubleClick = handler ? handler : this._defaultOnDoubleClick.bind(this)
+        this._element.ondblclick = this._onDoubleClick
+
+        return this
+    }
+    removeDoubleClickFromElement() {
+        this._element.ondblclick = null
+    }
+    toggleDoubleClickAtElement() {
+        if (this._element.ondblclick) {
+            this.removeDoubleClickFromElement()
+        } else {
+            this.setDoubleClickToElement(this._onDoubleClick)
+        }
     }
 
     zoomIn(zoomCoefficient = this._defaultZoomCoefficient) {
         this._zoom(zoomCoefficient)
     }
-
     zoomOut(zoomCoefficient = this._defaultZoomCoefficient) {
         this._zoom(this._invertZoomCoefficient(zoomCoefficient))
     }
 
-    reset() {
+    resetAll() {
+        this.resetZoom()
+        this.resetMove()
+    }
+    resetZoom() {
         this._matrix.scale = this._minScale
+        this._applyMatrixToElement()
+    }
+    resetMove() {
         this._matrix.translateX = this._matrix.translateY = 0
-
         this._applyMatrixToElement()
     }
 
     isZoomed() {
         return this._matrix.scale > this._minScale
+    }
+    isMoved() {
+        return (this._matrix.translateX !== 0) || (this._matrix.translateY !== 0)
     }
 
     _onPointerDown(event) {
@@ -75,10 +114,9 @@ class Zoomer {
         this._element.addEventListener('pointermove', onPointerMove)
         this._element.addEventListener('pointerup', onPointerUp)
     }
-
-    _onDoubleClick() {
+    _defaultOnDoubleClick() {
         if (this.isZoomed()) {
-            this.reset()
+            this.resetAll()
         } else {
             this.zoomIn(this._defaultZoomCoefficient * 2)
         }
@@ -92,7 +130,6 @@ class Zoomer {
             this._applyMatrixToElement()
         }
     }
-
     _updatePointerByEvent(event) {
         this._pointer.previousX = this._pointer.x
         this._pointer.previousY = this._pointer.y
@@ -100,11 +137,9 @@ class Zoomer {
         this._pointer.x = event.pageX
         this._pointer.y = event.pageY
     }
-
     _invertZoomCoefficient(zoomCoefficient) {
         return (1 / zoomCoefficient)
     }
-
     _applyMatrixToElement() {
         this._element.style.transform = `matrix(
             ${this._matrix.scale}, 

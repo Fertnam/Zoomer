@@ -10,26 +10,23 @@ body {
 }
 
 .area {
-    position: relative;
+    display: flex;
+    justify-content: center;
 
     height: 100%;
-    /*padding: 10px;*/
-
     overflow: hidden;
+
+    padding: 30px;
 }
 
 .area__item {
     position: relative;
-    top: 0;
-    left: 0;
 
-    width: 100px;
-    height: 100px;
+    width: 600px;
+    height: 100%;
 
     background-color: aquamarine;
     background-image: url("https://w-dog.ru/wallpapers/9/12/558725469376518/nebo-oblaka-gory-zakat-ozero-derevya-otrazhenie-lodka-pristan-sneg-vershina.jpg");
     background-position: center;
     background-size: cover;
-
-    touch-action: none;
 }

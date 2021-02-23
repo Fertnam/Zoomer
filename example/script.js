@@ -3,6 +3,7 @@ window.addEventListener('load', () => {
 
     const areaItemZoomer = new Zoomer(areaItem)
         .setDoubleClickToElement()
+        .setWheelToElement()
 
     document.querySelector('.tooltips__zoom-in')
         .addEventListener('click', zoomInClickHandler)
